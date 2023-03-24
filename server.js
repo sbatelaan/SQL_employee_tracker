@@ -16,6 +16,7 @@ conn.connect((err) => {
 });
 
 const empTrack = () => {
+    //Create a prompt with an array of listed options for user to navigate
   inquirer
     .prompt([
       {
@@ -34,6 +35,7 @@ const empTrack = () => {
         ],
       },
     ])
+    //create if/else statements for each option
     .then((answers) => {
       if (answers.prompt === "View all departments") {
         conn.query(`SELECT * FROM department`, (err, result) => {
@@ -48,6 +50,7 @@ const empTrack = () => {
           empTrack();
         });
       } else if (answers.prompt === "View all employees") {
+        //Created a join table so the user can view all the data without having to decipher the ID number corrolation
         conn.query(
           `SELECT employee.id, employee.first_name, employee.last_name, employee_role.title, department.name AS department, CONCAT(manager.first_name, ' ', manager.last_name) AS manager
             FROM employee 
@@ -125,9 +128,9 @@ const empTrack = () => {
               [answers.role, answers.salary, answers.ID],
               (err, result) => {
                 console.log("Added role");
-                conn.query(`SELECT * FROM employee_role`, (err, results) => {
+                conn.query(`SELECT * FROM employee_role`, (err, result) => {
                   if (err) throw err;
-                  console.table(results);
+                  console.table(result);
                   empTrack();
                 });
               }
@@ -202,8 +205,6 @@ const empTrack = () => {
                       })
                     );
 
-                    // console.log(managers);
-
                     inquirer
                       .prompt([
                         {
@@ -219,7 +220,7 @@ const empTrack = () => {
 
                         const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
                                 VALUES (?, ?, ?, ?)`;
-
+                        //created a join table to show all data
                         conn.query(sql, params, (err, result) => {
                           if (err) throw err;
                           console.log("Employee has been added!");
@@ -242,56 +243,54 @@ const empTrack = () => {
                 });
             });
           });
-      }else if(answers.prompt === 'Update an employee role') 
-      {
-        //get all the employee list 
+      } else if (answers.prompt === "Update an employee role") {
+        //get all the employee names
         conn.query("SELECT * FROM employee", (err, res) => {
           if (err) throw err;
           const employeeChoice = [];
           res.forEach(({ first_name, last_name, id }) => {
             employeeChoice.push({
               name: first_name + " " + last_name,
-              value: id
+              value: id,
             });
           });
-          
-          //get all the role list to make choice of employee's role
+
+          //get all the roles to make choice of employee's role
           conn.query("SELECT * FROM employee_role", (err, res) => {
             if (err) throw err;
             const roleChoice = [];
             res.forEach(({ title, id }) => {
               roleChoice.push({
                 name: title,
-                value: id
-                });
+                value: id,
               });
-           
+            });
+
             let questions = [
               {
                 type: "list",
                 name: "id",
                 choices: employeeChoice,
-                message: "whose role do you want to update?"
+                message: "whose role do you want to update?",
               },
               {
                 type: "list",
                 name: "role_id",
                 choices: roleChoice,
-                message: "what is the employee's new role?"
-              }
-            ]
-        
-            inquirer.prompt(questions)
-              .then(response => {
-                const query = `UPDATE employee SET ? WHERE ?? = ?;`;
-                conn.query(query, [
-                  {role_id: response.role_id},
-                  "id",
-                  response.id
-                ], (err, res) => {
+                message: "what is the employee's new role?",
+              },
+            ];
+
+            inquirer.prompt(questions).then((response) => {
+              const query = `UPDATE employee SET ? WHERE ?? = ?;`;
+              conn.query(
+                query,
+                [{ role_id: response.role_id }, "id", response.id],
+                (err, res) => {
                   if (err) throw err;
-                  
+
                   console.log("successfully updated employee's role!");
+                  //created a join table to show all data
                   conn.query(
                     `SELECT employee.id, employee.first_name, employee.last_name, employee_role.title, department.name AS department, CONCAT(manager.first_name, ' ', manager.last_name) AS manager
                         FROM employee 
@@ -302,15 +301,17 @@ const empTrack = () => {
                     (err, results) => {
                       if (err) throw err;
                       console.table(results);
-                   
-                  empTrack();})
-                });
-              })
-              
-            })
+
+                      empTrack();
+                    }
+                  );
+                }
+              );
+            });
+          });
         });
       }
-    }) 
+    });
 };
 
 module.exports = conn;
