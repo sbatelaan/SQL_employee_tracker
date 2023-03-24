@@ -76,5 +76,5 @@ THEN I am prompted to select an employee to update and their new role and this i
     ---
     * [inquirer](https://www.npmjs.com/package/inquirer) - For the CLI user interface. This will prompt user within the CLI for employee information.
     * [console.table](https://www.npmjs.com/package/console.table) - Used to print MySQL into tables to the console.
-    * [mysql](https://www.npmjs.com/package/mysql) - Used to connect to the MySQL database and perform queries
-    * [promise-mysql](https://www.npmjs.com/package/promise-mysql) - Used to create promises from MySQL queries 
+    * [mysql2](https://www.npmjs.com/package/mysql2) - Used to connect to the MySQL database and perform queries
+    
