@@ -57,6 +57,8 @@ THEN I am prompted to select an employee to update and their new role and this i
 
 ## Usage
 ---
+Video Walkthrough https://drive.google.com/file/d/1SwkrxyxCxvXMODFXbk5rimhQ2x68TMWj/view
+
 1. Run `node server.js` to start the application
 2. Select from the menu to view, add, remove, or update employees, roles, departments, or managers
 
